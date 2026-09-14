@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prototype Web Proxy</title>
+    <!-- Core Proxy and Transport Framework Scripts -->
+    <script src="/scram/scramjet.all.js"></script>
+    <script src="/baremux/index.js"></script>
+</head>
+<body>
+    <div style="text-align: center; margin-top: 10%;">
+        <h1>Research Proxy Sandbox</h1>
+        <form id="proxy-form">
+            <input type="text" id="url-input" placeholder="Enter URL (e.g., https://example.com)" style="width: 400px; padding: 10px;">
+            <button type="submit" style="padding: 10px;">Launch</button>
+        </form>
+    </div>
+
+    <script>
+        // Form execution logic
+        document.getElementById('proxy-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const inputVal = document.getElementById('url-input').value;
+            
+            // Format or search logic could be appended here
+            if (inputVal) {
+                // Scramjet typically encodes or prefixes the target URL
+                // Redirecting the client window to the proxied route
+                window.location.href = __scramjet$config.prefix + encodeURIComponent(inputVal);
+            }
+        });
+
+        // Registering the Interception Service Worker
+        async function initProxy() {
+            if ('serviceWorker' in navigator) {
+                try {
+                    await navigator.serviceWorker.register('/scramjet.sw.js', {
+                        scope: __scramjet$config.prefix
+                    });
+                    console.log('Proxy Service Worker active.');
+                } catch (err) {
+                    console.error('Service Worker registration failed:', err);
+                }
+            }
+        }
+        initProxy();
+    </script>
+</body>
+</html>
